@@ -8,14 +8,20 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/index")
 public class Repository {
-    private Map<String, Student> studentList = new HashMap<>();
+    private Map<String, Student> studentList = new HashMap<String, Student>() {
+        {
+            put("Angela", new Student("Angela", '女', "12"));
+            put("Cindy", new Student("Cindy", '男', "13"));
+        }
+    };
 
     @PostMapping("/post")
-    public String addStudent(@RequestBody Student student) {
-        if (studentList.containsKey(student.getName())) {
+    public String addStudent(@RequestParam String name, char gender, String classId) {
+        Student student = new Student(name, gender, classId);
+        if (this.studentList.containsKey(name)) {
             return "姓名重复";
         } else {
-            studentList.put(student.getName(), student);
+            this.studentList.put(name, student);
             return "添加成功";
         }
     }
@@ -23,24 +29,24 @@ public class Repository {
     @RequestMapping(value = "/queryAll", method = RequestMethod.GET)
     public String QueryAll() {
         StringBuilder sb = new StringBuilder();
-        for (String studentName : studentList.keySet()) {
-            sb.append(studentList.get(studentName).toString()).append("\n");
+        for (Object studentName : this.studentList.keySet()) {
+            sb.append(this.studentList.get(studentName).toString()).append("\n");
         }
         return sb.toString();
     }
 
-    @RequestMapping(value = "/getInfo", params = {"name"}, method = RequestMethod.GET)
-    public String getInfoByName(@RequestBody String name) {
-        return studentList.get(name).toString();
+    @RequestMapping(value = "/getInfo", method = RequestMethod.GET)
+    public String getInfoByName(@RequestParam(value = "name", required = false) String name) {
+        return this.studentList.get(name).toString();
     }
 
     @RequestMapping(value = "/deleteStudent", method = RequestMethod.DELETE)
-    public String deleteStudent(@RequestParam(value = "name") String name) {
-        if (studentList.remove(name) != null) {
+    public String deleteStudent(@RequestParam(value = "name", required = false) String name) {
+        if (this.studentList.containsKey(name)) {
+            this.studentList.remove(name);
             return "删除成功";
-        } else {
-            return "该学生不存在";
         }
+        return "该学生不存在";
     }
 
 

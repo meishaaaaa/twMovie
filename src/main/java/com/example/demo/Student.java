@@ -5,9 +5,16 @@ public class Student {
     private char gender;
     private String classId;
 
+    public Student(String name, char gender, String classId) {
+        this.name = name;
+        this.gender = gender;
+        this.classId = classId;
+    }
+
     public String getName() {
         return name;
     }
+
 
     public void setName(String name) {
         this.name = name;
