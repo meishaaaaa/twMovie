@@ -8,40 +8,41 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/index")
 public class StudentController {
     @Autowired
-    private StudentRepository studentRepository;
-
+    private StudentService studentService;
 
     @GetMapping("/student/{name}")
-    public Student getStu(@PathVariable String name) {
-        return studentRepository.findById(studentRepository.findStudentId(name)).orElse(null);
+    public String getStu(@PathVariable String name) {
+        try {
+            return studentService.getInfo(name).toString();
+        } catch (ExistOrNotException e) {
+            return e.getMessage();
+        }
     }
 
     @PostMapping("/save")
     public String addStudent(@RequestParam String name, @RequestParam String gender, @RequestParam String classId) {
-
-        if (studentRepository.findStudentId(name)!=null) {
-            return "姓名重复";
-        } else {
-            studentRepository.save(new Student(null,name,gender,classId));
+        try {
+            studentService.save(name, gender, classId);
             return "添加成功";
+        } catch (ExistOrNotException e) {
+            return e.getMessage();
         }
     }
 
     @RequestMapping(value = "/students")
     public Iterable<Student> students() {
-        return studentRepository.findAll();
+        return studentService.students();
     }
 
 
     @PostMapping(value = "/delete")
     public String deleteStudent(@RequestParam(value = "name", required = false) String name) {
-        if (studentRepository.findStudentId(name)!=null) {
-            studentRepository.delete(studentRepository.findById(studentRepository.findStudentId(name)).get());
+        try {
+            studentService.delete(name);
             return "删除成功";
-        } else {
-            return "姓名不存在";
+        } catch (ExistOrNotException e) {
+            return e.getMessage();
         }
     }
-
 
 }
