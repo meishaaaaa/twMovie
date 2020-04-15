@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -33,21 +34,25 @@ public class MovieService {
     }
 
     public List<BriefMovie> getMovies(String genres, String sorting, int limit) {
-        String newGenre = "%" + genres + "%";
+        String all = "全部";
+        if (!Objects.equals(genres, all)) {
+            genres = "%" + genres + "%";
+        }
         List<Movie> list = new ArrayList<>();
         switch (limit) {
             case (0):
-                list = noLimit(newGenre, sorting);
+                list = noLimit(genres, sorting);
                 break;
             default:
-                list = withLimit(newGenre, sorting, limit);
+                list = withLimit(genres, sorting, limit);
         }
         List<BriefMovie> briefMovies = list.stream().map(m -> new BriefMovie(m.getId(), m.getTitle(), m.getRating(), m.getGenres(), m.getYear(), m.getPhotos(), m.getSummary())).collect(Collectors.toList());
         return briefMovies;
     }
 
     private List<Movie> noLimit(String genres, String sorting) {
-        if (genres.equals("全部")) {
+        String all = "全部";
+        if (Objects.equals(genres, all)) {
             return sorting.equals("top") ? movieRepository.allMoviesByRating() :
                     sorting.equals("random") ? movieRepository.allMoviesByRandom() :
                             null;
@@ -58,7 +63,8 @@ public class MovieService {
     }
 
     private List<Movie> withLimit(String genres, String sorting, int limit) {
-        if (genres.equals("全部")) {
+        String all = "全部";
+        if (Objects.equals(genres, all)) {
             return sorting.equals("top") ? movieRepository.allMoviesByRating(limit) :
                     sorting.equals("random") ? movieRepository.allMoviesByRandom(limit) :
                             null;

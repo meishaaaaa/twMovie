@@ -23,10 +23,10 @@ public interface MovieRepository extends CrudRepository<Movie, Integer> {
     @Query("SELECT * FROM movie WHERE genres LIKE :genres ORDER BY rand() DESC LIMIT :limit ")
     public List<Movie> moviesByRandom(@Param("genres") String genres, @Param("limit") int limit);
 
-    @Query("SELECT * FROM movie ORDER BY rating DESC")
+    @Query("SELECT * FROM movie ORDER BY rating DESC LIMIT :limit")
     public List<Movie> allMoviesByRating(@Param("limit") int limit);
 
-    @Query("SELECT * FROM movie ORDER BY random DESC ")
+    @Query("SELECT * FROM movie ORDER BY rand() DESC LIMIT :limit ")
     public List<Movie> allMoviesByRandom(@Param("limit") int limit);
 
     @Query("SELECT * FROM movie WHERE genres LIKE :genres ORDER BY rating DESC")
@@ -38,7 +38,7 @@ public interface MovieRepository extends CrudRepository<Movie, Integer> {
     @Query("SELECT * FROM movie ORDER BY rating DESC ")
     public List<Movie> allMoviesByRating();
 
-    @Query("SELECT * FROM movie ORDER BY random DESC")
+    @Query("SELECT * FROM movie ORDER BY rand() DESC")
     public List<Movie> allMoviesByRandom();
 
     @Query("SELECT id, title, photos FROM movie WHERE genres LIKE :genres ORDER BY rating DESC ")
