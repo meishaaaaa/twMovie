@@ -1,7 +1,7 @@
 package com.example.demo;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.example.demo.Entity.Movie;
 
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServletResponse;
@@ -16,13 +16,7 @@ public class Json {
 
         PrintWriter writer = response.getWriter();
 
-        String json = JSONObject.toJSONString(movie,
-                SerializerFeature.WriteMapNullValue,
-                SerializerFeature.WriteNullNumberAsZero,
-                SerializerFeature.WriteNullListAsEmpty,
-                SerializerFeature.WriteNullStringAsEmpty,
-                SerializerFeature.WriteNullBooleanAsFalse,
-                SerializerFeature.DisableCircularReferenceDetect);
+        String json = JSONObject.toJSONString(movie);
         writer.write(json);
         writer.close();
     }

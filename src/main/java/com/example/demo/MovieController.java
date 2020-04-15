@@ -1,10 +1,12 @@
 package com.example.demo;
 
+import com.example.demo.Entity.BriefMovie;
+import com.example.demo.Entity.DetailedMovie;
+import com.example.demo.Entity.Movie;
+import com.example.demo.Entity.SearchMovie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 
@@ -14,24 +16,25 @@ public class MovieController {
     @Autowired
     private MovieService movieService;
 
-    @RequestMapping(value = "/search/{key}", method = RequestMethod.GET)
-    @ResponseBody
-    public List<Movie> findKeywords(@PathVariable("key") String key) {
-        return  movieService.SearchByKeyWords(key);
-    }
-
-    @RequestMapping(value = "/key/{key}", method = RequestMethod.GET)
-    public void findKey(@PathVariable("key") String key, HttpServletResponse response) throws Exception{
-        List<Movie> movies = movieService.SearchByKeyWords(key);
-        for (Movie m : movies) {
-            Json.toJson(m,response);
-        }
+    public MovieController(MovieService movieService) {
+        this.movieService = movieService;
     }
 
     @RequestMapping(value = "/details/{id}", method = RequestMethod.GET)
-    public @ResponseBody Movie getDetails(@PathVariable("id") int id)
-    {
-    return movieService.getInfo(id);
+    @ResponseBody
+    public DetailedMovie getDetails(@PathVariable("id") int id) {
+        return movieService.getInfo(id);
+    }
+
+    @RequestMapping(value = "/movies", method = RequestMethod.GET)
+    @ResponseBody
+    public List<BriefMovie> getMovies(@RequestParam String genres, @RequestParam String sorting, @RequestParam int limit) {
+        return movieService.getMovies(genres, sorting, limit);
+    }
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @ResponseBody
+    public List<SearchMovie> searchKey(@RequestParam("keywords") String keywords) {
+        return movieService.keyWords(keywords);
     }
 
 }
